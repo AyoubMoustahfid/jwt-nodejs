@@ -7,41 +7,30 @@ I challenged myself during last weeks to implement an authentication on a freshl
 ## Installation
 
 ```bash
-  npm install jwt-nodejs
+npm install jwt-nodejs
 ```
 
 
-## Usage/Examples
-
+  ## Usage/Examples
+ 
 ```bash
-   generateToken(payload, secretOrPrivateKey)
+ generateToken(payload, secretOrPrivateKey)
 ```
+
+  `payload` could be an object literal, buffer or string representing valid JSON.
+  
+  ```bash
+-Please note that exp or any other claim is only set if the payload is an object literal. Buffer or string payloads are not checked for JSON validity.
+     
+ -If payload is not a buffer or a string, it will be coerced into a string using JSON.stringify.
+  ```
+  
+  `secretOrPrivateKey` is a string, buffer, or object containing either the secret for HMAC algorithms or the PEM encoded private key for RSA and ECDSA. In case of a        private key with passphrase an object { key, passphrase } can be used (based on  [crypto documentation](https://cryptojs.gitbook.io/docs/#encoders)), in this case be sure you pass the algorithm option.
 
 ```javascript
 const {generateToken} = require('jwt-nodejs')
 
-exports.singin = (req, res) => {
-    const {email, password} = req.body
-
-    User.findOne({email}, (err, user) => {
-        if(err || !user) {
-            return res.status(400).json({
-                error: "User not found with this email, Please Signup!"
-            })
-        }
-        
-        // Generate token with user data and secret key 
-        const token = generateToken(DATA, process.env.JWT_SECRET);
-
-        res.cookie("token", token, {expire: TIME})
-
-        const {DATA_USER} = user;
-
-        res.json({
-            token, user: {DATA_USER}
-        })
-    })
-}
+const token = generateToken({ foo: 'bar' }, process.env.JWT_SECRET);
 ```
 
 ## What is JSON Web Token (JWT)?
