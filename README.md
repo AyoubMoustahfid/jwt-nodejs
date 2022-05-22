@@ -4,6 +4,46 @@
 
 I challenged myself during last weeks to implement an authentication on a freshly created API. After digging around, I found that one of the best solution would be JSON Web Tokens. As understanding a concept passes by experimenting it, here is a post describing how to forge such a token in JavaScript.
 
+## Installation
+
+```bash
+  npm install jwt-nodejs
+```
+
+
+## Usage/Examples
+
+```bash
+   generateToken(payload, secretOrPrivateKey)
+```
+
+```javascript
+const {generateToken} = require('jwt-nodejs')
+
+exports.singin = (req, res) => {
+    const {email, password} = req.body
+
+    User.findOne({email}, (err, user) => {
+        if(err || !user) {
+            return res.status(400).json({
+                error: "User not found with this email, Please Signup!"
+            })
+        }
+        
+        // Generate token with user data and secret key 
+        const token = generateToken(DATA, process.env.JWT_SECRET);
+
+        res.cookie("token", token, {expire: TIME})
+
+        const {DATA_USER} = user;
+
+        res.json({
+            token, user: {DATA_USER}
+        })
+    })
+}
+```
+
 ## What is JSON Web Token (JWT)?
 
 JSON Web Token (JWT) is an easy way to secure an API. When a user authenticates first on a server, using for instance a standard login form, the server creates a token. This token includes some personal data, such as username or email address. Then, this token is signed server-side (to prevent token integrity), and sent back to the user. Within each next request, user sends the token to establish emitter identity.
@@ -16,7 +56,7 @@ JSON Web Token (JWT) is an easy way to secure an API. When a user authenticates 
    - Free set of claims embedding whatever you want: username, email, roles, expiration date, etc.
    - Signature ensuring data integrity
 
-   ## Creating a JSON Web Token in JavaScript
+   ##  JSON Web Token in JavaScript
   
   JSON Web Tokens may be resumed by the following equations:
   
@@ -24,3 +64,11 @@ JSON Web Token (JWT) is an easy way to secure an API. When a user authenticates 
    unsignedToken = base64url(header) + "." + base64url(data)
    JWT = unsignedToken + "." + base64url(HMAC256(unsignedToken, secret))
    ```
+   
+  
+    
+
+
+
+
+
